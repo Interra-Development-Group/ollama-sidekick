@@ -85,3 +85,78 @@ export function parsePageFromDocument(doc: Document): {
     text
   }
 }
+
+// ─── Link extraction ──────────────────────────────────────────────────────────
+
+// Extensions that are definitely not HTML pages
+const ASSET_EXT = /\.(json|png|jpg|jpeg|gif|svg|ico|css|js|jsx|ts|tsx|woff|woff2|ttf|eot|pdf|zip|xml|txt|mp4|mp3|webm|webp|avif)(\?|#|$)/i
+
+export function extractLinks(html: string, baseUrl: string): string[] {
+  const base = new URL(baseUrl)
+  const seen = new Set<string>()
+  const links: string[] = []
+
+  // Only match <a href="..."> — not <link>, <script>, <img>, etc.
+  const regex = /<a\s[^>]*\bhref=["']([^"']+)["'][^>]*>/gi
+  let match
+
+  while ((match = regex.exec(html)) !== null) {
+    const raw = match[1].trim()
+    if (!raw || raw.startsWith("#") || raw.startsWith("mailto:") || raw.startsWith("tel:")) continue
+    try {
+      const resolved = new URL(raw, baseUrl)
+      if (resolved.origin !== base.origin) continue
+      if (!["http:", "https:"].includes(resolved.protocol)) continue
+      if (ASSET_EXT.test(resolved.pathname)) continue
+      resolved.hash = ""
+      const normalized = resolved.toString()
+      if (!seen.has(normalized) && normalized !== baseUrl) {
+        seen.add(normalized)
+        links.push(normalized)
+      }
+    } catch {
+      // Invalid URL — skip
+    }
+  }
+
+  return links
+}
+
+// ─── robots.txt ───────────────────────────────────────────────────────────────
+
+export async function fetchRobotsTxt(origin: string): Promise<string> {
+  try {
+    const res = await fetch(`${origin}/robots.txt`, {
+      headers: { "User-Agent": "Ollama-Sidekick-Crawler/1.0" }
+    })
+    return res.ok ? await res.text() : ""
+  } catch {
+    return ""
+  }
+}
+
+export function isAllowedByRobots(robotsTxt: string, path: string): boolean {
+  if (!robotsTxt) return true
+
+  const lines = robotsTxt.split(/\r?\n/)
+  let inBlock = false
+
+  for (const raw of lines) {
+    const line = raw.trim()
+    if (!line || line.startsWith("#")) continue
+
+    const [key, ...rest] = line.split(":")
+    const value = rest.join(":").trim()
+
+    if (key.toLowerCase() === "user-agent") {
+      inBlock = value === "*"
+      continue
+    }
+
+    if (inBlock && key.toLowerCase() === "disallow" && value) {
+      if (path.startsWith(value)) return false
+    }
+  }
+
+  return true
+}

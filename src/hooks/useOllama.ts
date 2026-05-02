@@ -58,10 +58,22 @@ export function useOllama(availableTools: MCPToolSchema[] = []): UseOllamaReturn
 
       if (result && typeof result === "object" && "ollamaModels" in result) {
         const models = (result as any).ollamaModels as string[]
-        setAvailableModels(models.length > 0 ? models : [process.env.PLASMO_PUBLIC_CHAT_MODEL || "llama3.2"])
+        if (models.length > 0) {
+          setAvailableModels(models)
+          const EMBED_PATTERNS = ["embed", "minilm", "arctic-embed", "e5-"]
+          const isEmbed = (n: string) => EMBED_PATTERNS.some((p) => n.toLowerCase().includes(p))
+          const chatModels = models.filter((m) => !isEmbed(m))
+          // Auto-correct: keep current selection only if it's a real chat model that's installed
+          setState((prev) => ({
+            ...prev,
+            model: (!isEmbed(prev.model) && models.includes(prev.model))
+              ? prev.model
+              : (chatModels[0] ?? models[0])
+          }))
+        }
       }
     } catch {
-      setAvailableModels([process.env.PLASMO_PUBLIC_CHAT_MODEL || "llama3.2"])
+      // Leave availableModels empty — ModelSelector falls back to selectedModel
     }
   }
 
@@ -107,21 +119,21 @@ export function useOllama(availableTools: MCPToolSchema[] = []): UseOllamaReturn
         const { token, done } = msg.payload
 
         if (done) {
-          // Add assistant message with accumulated content
           if (accumulatedContent) {
-            const assistantMsg: ChatMessage = {
-              id: `assistant-${Date.now()}`,
-              role: "assistant",
-              content: accumulatedContent,
-              timestamp: Date.now()
-            }
-            setState((prev) => ({
-              ...prev,
-              messages: [...prev.messages, assistantMsg],
-              isStreaming: false
-            }))
+            setState((prev) => {
+              const msgs = [...prev.messages]
+              const last = msgs[msgs.length - 1]
+              // Replace the streaming placeholder in place rather than appending a duplicate
+              if (last?.role === "assistant") {
+                msgs[msgs.length - 1] = { ...last, content: accumulatedContent }
+              } else {
+                msgs.push({ id: `assistant-${Date.now()}`, role: "assistant", content: accumulatedContent, timestamp: Date.now() })
+              }
+              return { ...prev, messages: msgs, isStreaming: false }
+            })
+          } else {
+            setState((prev) => ({ ...prev, isStreaming: false }))
           }
-          // Reset tool calls tracking
           accumulatedContent = ""
           port.disconnect()
           portRef.current = null

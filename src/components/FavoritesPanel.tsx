@@ -94,14 +94,20 @@ export function FavoritesPanel({ favorites, onAdd, onRemove, onCrawl, isCrawling
       {favorites.length > 0 ? (
         <ul className="max-h-32 overflow-y-auto divide-y divide-slate-50">
           {favorites.map((url) => {
-            const domain = (() => { try { return new URL(url).hostname } catch { return url } })()
+            const label = (() => { try { return new URL(url).hostname } catch { return url } })()
             return (
               <li key={url} className="flex items-center gap-2 px-3 py-1.5 hover:bg-slate-50 group">
                 <span className="w-1.5 h-1.5 rounded-full bg-slate-300 shrink-0" />
-                <span className="flex-1 text-xs text-slate-600 truncate" title={url}>{domain}</span>
+                <button
+                  onClick={() => chrome.tabs.create({ url })}
+                  className="flex-1 text-xs text-indigo-600 hover:text-indigo-800 hover:underline truncate text-left transition-colors"
+                  title={url}
+                >
+                  {label}
+                </button>
                 <button
                   onClick={() => handleRemove(url)}
-                  className="text-slate-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+                  className="text-slate-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 shrink-0"
                   title="Remove"
                 >
                   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

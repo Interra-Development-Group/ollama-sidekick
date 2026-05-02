@@ -6,7 +6,7 @@ import { EMBED_MODEL, MAX_CONTEXT_CHUNKS, SIMILARITY_THRESHOLD } from "~/lib/oll
 import type { PageSnapshot } from "~/types/page"
 
 // ─── ScoredChunk type ────────────────────────────────────────────────────────
-interface ScoredChunk {
+export interface ScoredChunk {
   url: string
   title: string
   chunk: string

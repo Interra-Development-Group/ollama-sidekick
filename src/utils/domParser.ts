@@ -59,15 +59,17 @@ function cleanText(text: string): string {
 // ─── DOM-based extraction (content script / side panel only) ─────────────────
 
 function extractTextFromDocument(doc: Document): string {
-  doc.querySelectorAll("script, style, noscript").forEach((el) => el.remove())
-
   // Prefer article/main over body
-  const root =
+  const source =
     doc.querySelector("article") ||
     doc.querySelector("main") ||
     doc.querySelector('[role="main"]') ||
     doc.body ||
     doc.documentElement
+
+  // Clone so we never mutate the live document
+  const root = source.cloneNode(true) as HTMLElement
+  root.querySelectorAll("script, style, noscript").forEach((el) => el.remove())
 
   return cleanText(root.innerText ?? root.textContent ?? "")
 }

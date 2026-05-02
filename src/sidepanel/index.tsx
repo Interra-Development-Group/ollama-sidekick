@@ -6,17 +6,22 @@ import { ChatPanel } from "~/components/ChatPanel"
 import { ModelSelector } from "~/components/ModelSelector"
 import { FavoritesPanel } from "~/components/FavoritesPanel"
 import { PageContext } from "~/components/PageContext"
+import { SearchPanel } from "~/components/SearchPanel"
+import { KnowledgePanel } from "~/components/KnowledgePanel"
 import { useOllama } from "~/hooks/useOllama"
 import { usePageContent } from "~/hooks/usePageContent"
 import { useFavorites } from "~/hooks/useFavorites"
 import { useMCP } from "~/hooks/useMCP"
 import { StatusBar } from "~/components/StatusBar"
 
+type Tab = "chat" | "search" | "knowledge"
+
 export default function App() {
   const [pageContext, setPageContext] = useState<{ url: string; title: string; text: string; selection: string } | null>(null)
   const [showFavorites, setShowFavorites] = useState(false)
   const [crawlStatus, setCrawlStatus] = useState<{ text: string; type: "running" | "done" | "error" } | null>(null)
   const [isCrawling, setIsCrawling] = useState(false)
+  const [activeTab, setActiveTab] = useState<Tab>("chat")
   const crawlPortRef = useRef<chrome.runtime.Port | null>(null)
 
   const { state: ollamaState, send, clear, setModel, availableModels } = useOllama()
@@ -74,14 +79,13 @@ export default function App() {
         setIsCrawling(false)
         port.disconnect()
         crawlPortRef.current = null
-      } else if (status === "error") {
-        setCrawlStatus({ text: `Error: ${message || url}`, type: "error" })
-        setIsCrawling(false)
-        port.disconnect()
-        crawlPortRef.current = null
       } else if (status === "running") {
-        const domain = (() => { try { return new URL(url).hostname } catch { return url } })()
-        setCrawlStatus({ text: `Crawling ${domain}…`, type: "running" })
+        const label = (() => { try { return new URL(url).hostname } catch { return url } })()
+        setCrawlStatus({ text: `Crawling ${label}…`, type: "running" })
+      } else if (status === "error") {
+        // Per-URL error — show it but keep crawling; the scheduler continues the loop
+        const label = (() => { try { return new URL(url).hostname } catch { return url } })()
+        setCrawlStatus({ text: `⚠ ${label}: ${message || "failed"}`, type: "error" })
       }
     })
 
@@ -92,6 +96,12 @@ export default function App() {
 
     port.postMessage({ type: "CRAWL_NOW" })
   }, [isCrawling])
+
+  const tabs: { id: Tab; label: string }[] = [
+    { id: "chat", label: "Chat" },
+    { id: "search", label: "Search" },
+    { id: "knowledge", label: "Knowledge" },
+  ]
 
   return (
     <div className="flex flex-col h-screen bg-white overflow-hidden">
@@ -109,68 +119,91 @@ export default function App() {
         />
       </header>
 
-      {/* ── Page context strip ─────────────────────────────── */}
-      <PageContext content={pageContext} onRefresh={refreshPage} />
+      {/* ── Tab bar ────────────────────────────────────────── */}
+      <div className="flex border-b border-slate-200 bg-white shrink-0">
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`flex-1 py-2 text-xs font-medium transition-colors border-b-2 -mb-px
+              ${activeTab === tab.id
+                ? "border-indigo-600 text-indigo-600"
+                : "border-transparent text-slate-500 hover:text-slate-700"
+              }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
 
-      {/* ── Favorites toggle ───────────────────────────────── */}
-      <button
-        onClick={() => setShowFavorites(!showFavorites)}
-        className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 border-b border-slate-200
-          text-xs text-slate-600 hover:bg-slate-100 transition-colors w-full text-left shrink-0"
-      >
-        <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-            d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-        </svg>
-        <span className="font-medium">Favorites</span>
-        {favoritesState.urls.length > 0 && (
-          <span className="px-1.5 py-0.5 bg-indigo-100 text-indigo-700 rounded-full text-[10px] font-semibold">
-            {favoritesState.urls.length}
-          </span>
-        )}
-        {crawlStatus && (
-          <span className={`ml-1 text-[10px] font-medium truncate max-w-[140px] ${
-            crawlStatus.type === "done" ? "text-emerald-600"
-            : crawlStatus.type === "error" ? "text-red-500"
-            : "text-indigo-500"
-          }`}>
-            {crawlStatus.type === "running" && (
-              <span className="inline-block w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse mr-1" />
+      {/* ── Chat-only chrome ───────────────────────────────── */}
+      {activeTab === "chat" && (
+        <>
+          <PageContext content={pageContext} onRefresh={refreshPage} />
+
+          <button
+            onClick={() => setShowFavorites(!showFavorites)}
+            className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 border-b border-slate-200
+              text-xs text-slate-600 hover:bg-slate-100 transition-colors w-full text-left shrink-0"
+          >
+            <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+            </svg>
+            <span className="font-medium">Favorites</span>
+            {favoritesState.urls.length > 0 && (
+              <span className="px-1.5 py-0.5 bg-indigo-100 text-indigo-700 rounded-full text-[10px] font-semibold">
+                {favoritesState.urls.length}
+              </span>
             )}
-            {crawlStatus.text}
-          </span>
-        )}
-        <svg
-          className={`w-3 h-3 ml-auto text-slate-400 transition-transform duration-150 shrink-0 ${showFavorites ? "rotate-180" : ""}`}
-          fill="none" stroke="currentColor" viewBox="0 0 24 24"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
+            {crawlStatus && (
+              <span className={`ml-1 text-[10px] font-medium truncate max-w-[140px] ${
+                crawlStatus.type === "done" ? "text-emerald-600"
+                : crawlStatus.type === "error" ? "text-red-500"
+                : "text-indigo-500"
+              }`}>
+                {crawlStatus.type === "running" && (
+                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse mr-1" />
+                )}
+                {crawlStatus.text}
+              </span>
+            )}
+            <svg
+              className={`w-3 h-3 ml-auto text-slate-400 transition-transform duration-150 shrink-0 ${showFavorites ? "rotate-180" : ""}`}
+              fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
 
-      {/* ── Favorites panel (collapsible) ──────────────────── */}
-      {showFavorites && (
-        <FavoritesPanel
-          favorites={favoritesState.urls}
-          onAdd={addFavorite}
-          onRemove={removeFavorite}
-          onCrawl={handleCrawl}
-          isCrawling={isCrawling}
-          currentPage={pageContext}
-        />
+          {showFavorites && (
+            <FavoritesPanel
+              favorites={favoritesState.urls}
+              onAdd={addFavorite}
+              onRemove={removeFavorite}
+              onCrawl={handleCrawl}
+              isCrawling={isCrawling}
+              currentPage={pageContext}
+            />
+          )}
+        </>
       )}
 
-      {/* ── Chat (fills remaining space) ───────────────────── */}
+      {/* ── Tab content (fills remaining space) ────────────── */}
       <div className="flex-1 overflow-hidden">
-        <ChatPanel
-          messages={ollamaState.messages}
-          onSend={send}
-          isStreaming={ollamaState.isStreaming}
-          error={ollamaState.error}
-          pageContent={pageContext}
-          onClear={clear}
-          availableTools={mcpState.tools}
-        />
+        {activeTab === "chat" && (
+          <ChatPanel
+            messages={ollamaState.messages}
+            onSend={send}
+            isStreaming={ollamaState.isStreaming}
+            error={ollamaState.error}
+            pageContent={pageContext}
+            onClear={clear}
+            availableTools={mcpState.tools}
+          />
+        )}
+        {activeTab === "search" && <SearchPanel />}
+        {activeTab === "knowledge" && <KnowledgePanel />}
       </div>
 
       {/* ── Status bar ─────────────────────────────────────── */}
