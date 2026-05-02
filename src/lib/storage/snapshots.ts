@@ -22,8 +22,7 @@ export async function getSnapshot(url: string): Promise<PageSnapshot | undefined
 
 export async function getAllSnapshots(): Promise<PageSnapshot[]> {
   const db = await getDb()
-  const results = await (db.transaction("snapshots", "readonly").objectStore("snapshots" as any) as any).getAll()
-  return results as PageSnapshot[]
+  return db.getAll("snapshots")
 }
 
 export async function deleteSnapshot(url: string): Promise<void> {
