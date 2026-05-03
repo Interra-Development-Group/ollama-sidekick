@@ -26,7 +26,7 @@ export default function App() {
 
   const { state: ollamaState, send, clear, setModel, availableModels, modelAutoChanged } = useOllama()
   const { content: pageContent, refresh: refreshPage } = usePageContent()
-  const { state: favoritesState, addFavorite, removeFavorite } = useFavorites()
+  const { state: favoritesState, addFavorite, removeFavorite, toggleCrawl } = useFavorites()
   const { state: mcpState } = useMCP()
 
   // Auto-fetch page content on mount and tab changes
@@ -152,9 +152,9 @@ export default function App() {
                 d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
             </svg>
             <span className="font-medium">Favorites</span>
-            {favoritesState.urls.length > 0 && (
+            {favoritesState.entries.length > 0 && (
               <span className="px-1.5 py-0.5 bg-indigo-100 text-indigo-700 rounded-full text-[10px] font-semibold">
-                {favoritesState.urls.length}
+                {favoritesState.entries.length}
               </span>
             )}
             {crawlStatus && (
@@ -179,9 +179,10 @@ export default function App() {
 
           {showFavorites && (
             <FavoritesPanel
-              favorites={favoritesState.urls}
+              favorites={favoritesState.entries}
               onAdd={addFavorite}
               onRemove={removeFavorite}
+              onToggleCrawl={toggleCrawl}
               onCrawl={handleCrawl}
               isCrawling={isCrawling}
               currentPage={pageContext}

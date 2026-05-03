@@ -7,9 +7,10 @@
 // The chrome.alarms API will wake this worker when needed.
 
 import { streamChat, healthCheck, listModels } from "~/lib/ollama/client"
+import { log, warn } from "~/lib/utils/logger"
 import { getAllTools, routeToolCall, addMcpServer, removeMcpServer, listMcpServers } from "~/lib/mcp/registry"
 import { getAllSnapshots } from "~/lib/storage/snapshots"
-import { getFavorites, addFavorite, removeFavorite } from "~/lib/storage/favorites"
+import { getAllFavorites, addFavorite, removeFavorite, updateFavorite } from "~/lib/storage/favorites"
 import { semanticSearch } from "~/lib/embeddings/similarity"
 import { initCrawlSchedule, handleCrawlAlarm, runCrawl } from "~/lib/crawler/scheduler"
 import type { ExtensionMessage, HealthStatus } from "~/types/messages"
@@ -22,7 +23,7 @@ import { CHAT_MODEL } from "~/lib/ollama/models"
 // ─── Lifecycle: install + startup ─────────────────────────────────────────────
 
 chrome.runtime.onInstalled.addListener(async () => {
-  console.log("[Sidekick] Extension installed")
+  log("[Sidekick] Extension installed")
   await initCrawlSchedule()
   // Open side panel behavior: clicking the action icon opens the side panel
   await chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true })
@@ -81,10 +82,11 @@ async function handlePortMessage(
       })
       break
 
-    case "GET_FAVORITES":
-      const favorites = await getFavorites()
-      port.postMessage({ type: "FAVORITES_RESPONSE", payload: favorites })
+    case "GET_FAVORITES": {
+      const entries = await getAllFavorites()
+      port.postMessage({ type: "FAVORITES_RESPONSE", payload: entries })
       break
+    }
 
     case "ADD_FAVORITE": {
       try {
@@ -99,6 +101,12 @@ async function handlePortMessage(
     case "REMOVE_FAVORITE": {
       await removeFavorite(msg.payload.url)
       port.postMessage({ type: "FAVORITE_REMOVED", payload: { url: msg.payload.url } })
+      break
+    }
+
+    case "UPDATE_FAVORITE": {
+      const updated = await updateFavorite(msg.payload.url, { crawl: msg.payload.crawl })
+      if (updated) port.postMessage({ type: "FAVORITE_UPDATED", payload: updated })
       break
     }
 
@@ -198,7 +206,7 @@ async function handleMessage(msg: ExtensionMessage): Promise<unknown> {
       return buildHealthStatus()
 
     case "GET_FAVORITES":
-      return { type: "FAVORITES_RESPONSE", payload: await getFavorites() }
+      return { type: "FAVORITES_RESPONSE", payload: await getAllFavorites() }
 
     case "ADD_FAVORITE": {
       const entry = await addFavorite(msg.payload.url, msg.payload.title)
@@ -208,6 +216,11 @@ async function handleMessage(msg: ExtensionMessage): Promise<unknown> {
     case "REMOVE_FAVORITE": {
       await removeFavorite(msg.payload.url)
       return { type: "FAVORITE_REMOVED", payload: { url: msg.payload.url } }
+    }
+
+    case "UPDATE_FAVORITE": {
+      const updated = await updateFavorite(msg.payload.url, { crawl: msg.payload.crawl })
+      return updated ? { type: "FAVORITE_UPDATED", payload: updated } : null
     }
 
     case "LIST_MCP_SERVERS":
@@ -241,7 +254,7 @@ async function handleChat(
 ): Promise<void> {
   const { messages, pageContext, availableTools, model } = payload
 
-  // Build system message with page context + snapshot context
+  // Build system message with page context + knowledge base context (RAG)
   const systemParts: string[] = [
     "You are Ollama Sidekick, a helpful AI assistant embedded in the user's browser.",
     "You have access to the content of the current web page and the user's saved knowledge base."
@@ -249,6 +262,26 @@ async function handleChat(
 
   if (pageContext) {
     systemParts.push(`\n--- CURRENT PAGE CONTENT ---\n${pageContext}\n--- END PAGE CONTENT ---`)
+  }
+
+  // Semantic search over the knowledge base and inject top matching chunks
+  try {
+    const snapshots = await getAllSnapshots()
+    const searchable = snapshots.filter((s) => s.embeddings.length > 0)
+    if (searchable.length > 0) {
+      const lastUserMsg = [...messages].reverse().find((m) => m.role === "user")
+      if (lastUserMsg) {
+        const chunks = await semanticSearch(lastUserMsg.content, searchable)
+        const goodChunks = chunks.filter((c) => !c.belowThreshold)
+        if (goodChunks.length > 0) {
+          const ctx = goodChunks.map((c) => `[${c.title}](${c.url})\n${c.chunk}`).join("\n\n---\n\n")
+          systemParts.push(`\n--- KNOWLEDGE BASE ---\n${ctx}\n--- END KNOWLEDGE BASE ---`)
+          log(`[Chat] Injected ${goodChunks.length} knowledge base chunks`)
+        }
+      }
+    }
+  } catch (err) {
+    warn("[Chat] Knowledge base search skipped:", err)
   }
 
   const fullMessages: Extract<ExtensionMessage, { type: "CHAT" }>["payload"]["messages"] = [

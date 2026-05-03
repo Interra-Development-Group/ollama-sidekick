@@ -8,6 +8,13 @@ export interface PageContent {
   selection: string
 }
 
+export interface FavoriteEntry {
+  url: string
+  title: string
+  addedAt: number
+  crawl: boolean  // false = skip during auto-crawl; still crawlable on-demand
+}
+
 export interface ChatMessage {
   id: string
   role: "user" | "assistant" | "system" | "tool"
@@ -79,6 +86,7 @@ export type ExtensionMessage =
   | { type: "GET_FAVORITES" }
   | { type: "ADD_FAVORITE"; payload: { url: string; title: string } }
   | { type: "REMOVE_FAVORITE"; payload: { url: string } }
+  | { type: "UPDATE_FAVORITE"; payload: { url: string; crawl: boolean } }
   | { type: "SEARCH_SNAPSHOTS"; payload: { query: string } }
   | { type: "GET_HEALTH" }
   | { type: "LIST_MCP_TOOLS" }
@@ -92,9 +100,10 @@ export type ExtensionMessage =
   | { type: "CHAT_TOKEN"; payload: ChatTokenPayload }
   | { type: "CHAT_ERROR"; payload: { message: string } }
   | { type: "CRAWL_STATUS"; payload: CrawlStatus }
-  | { type: "FAVORITES_RESPONSE"; payload: string[] }
-  | { type: "FAVORITE_ADDED"; payload: { url: string } }
+  | { type: "FAVORITES_RESPONSE"; payload: FavoriteEntry[] }
+  | { type: "FAVORITE_ADDED"; payload: FavoriteEntry }
   | { type: "FAVORITE_REMOVED"; payload: { url: string } }
+  | { type: "FAVORITE_UPDATED"; payload: FavoriteEntry }
   | { type: "SNAPSHOT_RESULTS"; payload: SnapshotResult }
   | { type: "HEALTH_RESPONSE"; payload: HealthStatus }
   | { type: "MCP_TOOLS_RESPONSE"; payload: { tools: MCPToolSchema[] } }

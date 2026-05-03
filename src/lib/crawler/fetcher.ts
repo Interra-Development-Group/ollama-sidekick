@@ -4,6 +4,7 @@
 import { domParser } from "~/utils/domParser"
 import { textChunker } from "~/utils/textChunker"
 import { PAGE_TEXT_MAX_CHARS } from "~/lib/ollama/models"
+import { warn, error } from "~/lib/utils/logger"
 import type { PageSnapshot } from "~/types/page"
 
 // ─── Fetch page content ───────────────────────────────────────────────────────
@@ -19,14 +20,42 @@ export async function fetchPageContent(url: string): Promise<string | null> {
     })
 
     if (!res.ok) {
-      console.warn(`[Fetcher] Failed to fetch ${url}: ${res.status}`)
+      warn(`[Fetcher] Failed to fetch ${url}: ${res.status}`)
       return null
     }
 
     return await res.text()
   } catch (err) {
-    console.error(`[Fetcher] Error fetching ${url}:`, err)
+    error(`[Fetcher] Error fetching ${url}:`, err)
     return null
+  }
+}
+
+// ─── Check if page has been modified since a given timestamp ──────────────────
+// Returns true (fetch needed) or false (skip — not modified).
+// Fails open: returns true on any error so we re-crawl rather than miss updates.
+
+export async function checkLastModified(url: string, since: number): Promise<boolean> {
+  try {
+    const res = await fetch(url, {
+      method: "HEAD",
+      headers: {
+        "User-Agent": "Ollama-Sidekick-Crawler/1.0",
+        "If-Modified-Since": new Date(since).toUTCString()
+      }
+    })
+
+    if (res.status === 304) return false
+
+    const lastModifiedHeader = res.headers.get("Last-Modified")
+    if (lastModifiedHeader) {
+      const lastModifiedMs = new Date(lastModifiedHeader).getTime()
+      if (!isNaN(lastModifiedMs) && lastModifiedMs <= since) return false
+    }
+
+    return true
+  } catch {
+    return true  // assume modified — fail open
   }
 }
 

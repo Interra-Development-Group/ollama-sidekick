@@ -1,19 +1,42 @@
 // ─── Favorites Panel Component ────────────────────────────────────────────────
 
 import { useState, useEffect } from "react"
+import type { FavoriteEntry } from "~/types/messages"
+import { ALARM_NAME } from "~/lib/crawler/scheduler"
 
 interface FavoritesPanelProps {
-  favorites: string[]
+  favorites: FavoriteEntry[]
   onAdd: (url: string, title: string) => Promise<void>
   onRemove: (url: string) => Promise<void>
+  onToggleCrawl: (url: string, crawl: boolean) => Promise<void>
   onCrawl: () => void
   isCrawling: boolean
   currentPage: { url: string; title: string; text: string; selection: string } | null
 }
 
-export function FavoritesPanel({ favorites, onAdd, onRemove, onCrawl, isCrawling, currentPage }: FavoritesPanelProps) {
+export function FavoritesPanel({
+  favorites,
+  onAdd,
+  onRemove,
+  onToggleCrawl,
+  onCrawl,
+  isCrawling,
+  currentPage
+}: FavoritesPanelProps) {
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null)
   const [adding, setAdding] = useState(false)
+  const [nextCrawl, setNextCrawl] = useState<string | null>(null)
+
+  useEffect(() => {
+    chrome.alarms.get(ALARM_NAME).then((alarm) => {
+      if (!alarm) { setNextCrawl(null); return }
+      const ms = alarm.scheduledTime - Date.now()
+      if (ms <= 0) { setNextCrawl(null); return }
+      const h = Math.floor(ms / 3_600_000)
+      const m = Math.floor((ms % 3_600_000) / 60_000)
+      setNextCrawl(h > 0 ? `${h}h ${m}m` : `${m}m`)
+    }).catch(() => setNextCrawl(null))
+  }, [])
 
   useEffect(() => {
     if (status) {
@@ -27,7 +50,7 @@ export function FavoritesPanel({ favorites, onAdd, onRemove, onCrawl, isCrawling
       setStatus({ type: "error", message: "No page loaded — click Refresh" })
       return
     }
-    if (favorites.includes(currentPage.url)) {
+    if (favorites.some((f) => f.url === currentPage.url)) {
       setStatus({ type: "error", message: "Already in favorites" })
       return
     }
@@ -50,7 +73,8 @@ export function FavoritesPanel({ favorites, onAdd, onRemove, onCrawl, isCrawling
     }
   }
 
-  const isCurrentPageSaved = currentPage ? favorites.includes(currentPage.url) : false
+  const isCurrentPageSaved = currentPage ? favorites.some((f) => f.url === currentPage.url) : false
+  const crawlCount = favorites.filter((f) => f.crawl !== false).length
 
   return (
     <div className="bg-white border-b border-slate-200 shrink-0">
@@ -92,21 +116,31 @@ export function FavoritesPanel({ favorites, onAdd, onRemove, onCrawl, isCrawling
 
       {/* Favorites list */}
       {favorites.length > 0 ? (
-        <ul className="max-h-32 overflow-y-auto divide-y divide-slate-50">
-          {favorites.map((url) => {
-            const label = (() => { try { return new URL(url).hostname } catch { return url } })()
+        <ul className="max-h-36 overflow-y-auto divide-y divide-slate-50">
+          {favorites.map((entry) => {
+            const label = (() => { try { return new URL(entry.url).hostname } catch { return entry.url } })()
+            const crawlEnabled = entry.crawl !== false
             return (
-              <li key={url} className="flex items-center gap-2 px-3 py-1.5 hover:bg-slate-50 group">
-                <span className="w-1.5 h-1.5 rounded-full bg-slate-300 shrink-0" />
+              <li key={entry.url} className="flex items-center gap-2 px-3 py-1.5 hover:bg-slate-50 group">
+                {/* Crawl toggle dot */}
                 <button
-                  onClick={() => chrome.tabs.create({ url })}
+                  onClick={() => onToggleCrawl(entry.url, !crawlEnabled)}
+                  title={crawlEnabled ? "Auto-crawl on — click to disable" : "Auto-crawl off — click to enable"}
+                  className={`w-2.5 h-2.5 rounded-full shrink-0 transition-colors border ${
+                    crawlEnabled
+                      ? "bg-emerald-400 border-emerald-500 hover:bg-emerald-300"
+                      : "bg-slate-200 border-slate-300 hover:bg-slate-300"
+                  }`}
+                />
+                <button
+                  onClick={() => chrome.tabs.create({ url: entry.url })}
                   className="flex-1 text-xs text-indigo-600 hover:text-indigo-800 hover:underline truncate text-left transition-colors"
-                  title={url}
+                  title={entry.url}
                 >
                   {label}
                 </button>
                 <button
-                  onClick={() => handleRemove(url)}
+                  onClick={() => handleRemove(entry.url)}
                   className="text-slate-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 shrink-0"
                   title="Remove"
                 >
@@ -126,11 +160,21 @@ export function FavoritesPanel({ favorites, onAdd, onRemove, onCrawl, isCrawling
 
       {/* Crawl button + status */}
       <div className="px-3 py-2 flex items-center gap-2 border-t border-slate-100">
-        {status && (
-          <span className={`text-xs ${status.type === "success" ? "text-emerald-600" : "text-red-500"}`}>
-            {status.message}
-          </span>
-        )}
+        <div className="flex flex-col gap-0.5 flex-1 min-w-0">
+          {favorites.length > 0 && crawlCount < favorites.length && (
+            <span className="text-[10px] text-slate-400">
+              {crawlCount === 0 ? "All disabled" : `${crawlCount} of ${favorites.length} auto-crawl`}
+            </span>
+          )}
+          {nextCrawl && crawlCount > 0 && (
+            <span className="text-[10px] text-slate-400">Next auto-crawl in {nextCrawl}</span>
+          )}
+          {status && (
+            <span className={`text-xs ${status.type === "success" ? "text-emerald-600" : "text-red-500"}`}>
+              {status.message}
+            </span>
+          )}
+        </div>
         <button
           onClick={onCrawl}
           disabled={favorites.length === 0 || isCrawling}
@@ -143,7 +187,7 @@ export function FavoritesPanel({ favorites, onAdd, onRemove, onCrawl, isCrawling
           </svg>
           {isCrawling ? "Crawling…" : "Crawl all"}
         </button>
-      </div>
+      </div>  {/* crawl button row */}
     </div>
   )
 }

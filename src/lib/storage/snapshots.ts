@@ -2,6 +2,7 @@
 // Stores crawled pages with embeddings in IndexedDB
 
 import type { PageSnapshot } from "~/types/page"
+import { log } from "~/lib/utils/logger"
 import { getDb } from "./db"
 
 // ─── CRUD Operations ──────────────────────────────────────────────────────────
@@ -9,9 +10,9 @@ import { getDb } from "./db"
 export async function saveSnapshot(snapshot: PageSnapshot): Promise<void> {
   const db = await getDb()
   const record = { ...snapshot, crawledAt: Date.now() }
-  console.log(`[Snapshots] Saving ${snapshot.url} — ${snapshot.wordCount} words, ${snapshot.chunks.length} chunks, ${snapshot.embeddings.length} embeddings${snapshot.summary ? ", has summary" : ""}`)
+  log(`[Snapshots] Saving ${snapshot.url} — ${snapshot.wordCount} words, ${snapshot.chunks.length} chunks, ${snapshot.embeddings.length} embeddings${snapshot.summary ? ", has summary" : ""}`)
   await db.put("snapshots", record)
-  console.log(`[Snapshots] Saved ${snapshot.url}`)
+  log(`[Snapshots] Saved ${snapshot.url}`)
 }
 
 export async function getSnapshot(url: string): Promise<PageSnapshot | undefined> {

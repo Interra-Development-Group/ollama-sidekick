@@ -1,5 +1,6 @@
 import type { DBSchema, IDBPDatabase } from "idb"
 import { openDB } from "idb"
+import { log } from "~/lib/utils/logger"
 import type { PageSnapshot } from "~/types/page"
 
 interface AppDBSchema extends DBSchema {
@@ -23,13 +24,13 @@ export async function getDb(): Promise<AppDatabase> {
       const dbAny = db as any
       if (oldVersion < 2 && dbAny.objectStoreNames.contains("favorites")) {
         dbAny.deleteObjectStore("favorites")
-        console.log("[DB] Dropped legacy favorites object store")
+        log("[DB] Dropped legacy favorites object store")
       }
       if (!db.objectStoreNames.contains("snapshots")) {
         const store = db.createObjectStore("snapshots", { keyPath: "id" })
         store.createIndex("url", "url")
         store.createIndex("crawledAt", "crawledAt")
-        console.log("[DB] Created snapshots object store")
+        log("[DB] Created snapshots object store")
       }
     }
   })

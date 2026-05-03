@@ -109,9 +109,12 @@ export function useOllama(availableTools: MCPToolSchema[] = []): UseOllamaReturn
     portRef.current = port
     abortControllerRef.current = new AbortController()
 
+    // Send full conversation history so the model has context from prior turns.
+    // Filter out system messages — the background rebuilds the system prompt itself.
+    const history = state.messages.filter((m) => m.role !== "system")
     port.postMessage({
       type: "CHAT",
-      payload: { messages: [userMsg], pageContext, availableTools, model: state.model }
+      payload: { messages: [...history, userMsg], pageContext, availableTools, model: state.model }
     })
 
     let accumulatedContent = ""

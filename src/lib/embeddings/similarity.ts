@@ -3,6 +3,7 @@
 
 import { generateEmbeddings } from "~/lib/ollama/client"
 import { EMBED_MODEL, MAX_CONTEXT_CHUNKS, SIMILARITY_THRESHOLD } from "~/lib/ollama/models"
+import { log } from "~/lib/utils/logger"
 import type { PageSnapshot } from "~/types/page"
 
 // ─── ScoredChunk type ────────────────────────────────────────────────────────
@@ -52,7 +53,7 @@ export async function semanticSearch(
   snapshots: PageSnapshot[]
 ): Promise<ScoredChunk[]> {
   const searchable = snapshots.filter((s) => s.embeddings.length > 0)
-  console.log(`[Search] ${searchable.length}/${snapshots.length} snapshots have embeddings, threshold=${SIMILARITY_THRESHOLD}`)
+  log(`[Search] ${searchable.length}/${snapshots.length} snapshots have embeddings, threshold=${SIMILARITY_THRESHOLD}`)
 
   if (searchable.length === 0) return []
 
@@ -69,7 +70,7 @@ export async function semanticSearch(
   all.sort((a, b) => b.score - a.score)
 
   const aboveThreshold = all.filter((r) => r.score >= SIMILARITY_THRESHOLD)
-  console.log(`[Search] ${aboveThreshold.length} results above threshold, best score=${all[0]?.score.toFixed(3) ?? "n/a"}`)
+  log(`[Search] ${aboveThreshold.length} results above threshold, best score=${all[0]?.score.toFixed(3) ?? "n/a"}`)
 
   if (aboveThreshold.length > 0) {
     return aboveThreshold.slice(0, MAX_CONTEXT_CHUNKS)

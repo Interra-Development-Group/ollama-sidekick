@@ -1,5 +1,6 @@
 import { generateEmbeddings } from "~/lib/ollama/client"
 import { EMBED_MODEL } from "~/lib/ollama/models"
+import { log, error } from "~/lib/utils/logger"
 import type { PageSnapshot } from "~/types/page"
 
 export async function generateChunkEmbedding(chunk: string): Promise<number[]> {
@@ -9,21 +10,19 @@ export async function generateChunkEmbedding(chunk: string): Promise<number[]> {
 
 export async function generateSnapshotEmbeddings(snapshot: PageSnapshot): Promise<PageSnapshot> {
   if (snapshot.chunks.length === 0) {
-    console.log(`[Embeddings] No chunks for ${snapshot.url} — skipping`)
+    log(`[Embeddings] No chunks for ${snapshot.url} — skipping`)
     return snapshot
   }
 
   const start = Date.now()
-  console.log(`[Embeddings] Generating for ${snapshot.url}: ${snapshot.chunks.length} chunks via ${EMBED_MODEL}`)
+  log(`[Embeddings] Generating for ${snapshot.url}: ${snapshot.chunks.length} chunks via ${EMBED_MODEL}`)
 
   try {
     const embeddings = await generateChunkEmbeddings(snapshot.chunks)
-    console.log(`[Embeddings] Done in ${Date.now() - start}ms — ${embeddings.length} vectors, dim=${embeddings[0]?.length ?? 0}`)
+    log(`[Embeddings] Done in ${Date.now() - start}ms — ${embeddings.length} vectors, dim=${embeddings[0]?.length ?? 0}`)
     return { ...snapshot, embeddings }
   } catch (err) {
-    // Non-fatal: save snapshot without embeddings so the record isn't lost.
-    // On next crawl, embeddings will be regenerated.
-    console.error(`[Embeddings] FAILED for ${snapshot.url}:`, err)
+    error(`[Embeddings] FAILED for ${snapshot.url}:`, err)
     return { ...snapshot, embeddings: [] }
   }
 }
