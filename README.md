@@ -141,6 +141,14 @@ If a model you had selected is removed from Ollama, the selector will briefly fl
 - The crawler only fetches URLs you explicitly mark as favorites.
 - No analytics, telemetry, or tracking of any kind.
 
+For the full policy, see [the published privacy policy](https://interra-development-group.github.io/ollama-sidekick/privacy/).
+
+---
+
+## Publisher
+
+Published by **Interra Development Group, LLC**. Source code is open and inspectable in this repository.
+
 ---
 
 ## A note on the Ollama name
@@ -151,7 +159,9 @@ If a model you had selected is removed from Ollama, the selector will briefly fl
 
 ## Developer setup
 
-**Repository:** [github.com/SpiderInk/llm-extension](https://github.com/SpiderInk/llm-extension)
+**Repository:** [github.com/Interra-Development-Group/ollama-sidekick](https://github.com/Interra-Development-Group/ollama-sidekick)
+
+For architecture, contribution guidelines, and product strategy, see [ARCHITECTURE.md](ARCHITECTURE.md), [CONTRIBUTING.md](CONTRIBUTING.md), and [STRATEGY.md](STRATEGY.md).
 
 
 ```bash

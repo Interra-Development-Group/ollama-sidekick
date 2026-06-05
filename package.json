@@ -1,8 +1,15 @@
 {
   "name": "ollama-sidekick",
-  "displayName": "Ollama Sidekick",
+  "displayName": "Ollama Sidekick by Interra",
   "version": "0.1.0",
   "description": "Privacy-first local AI side panel — Ollama + MCP + semantic page search",
+  "author": "Interra Development Group, LLC",
+  "homepage": "https://github.com/Interra-Development-Group/ollama-sidekick",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Interra-Development-Group/ollama-sidekick.git"
+  },
+  "license": "MIT",
   "scripts": {
     "dev": "plasmo dev",
     "build": "plasmo build",
@@ -32,6 +39,8 @@
     "@parcel/watcher": "^2.1.0"
   },
   "manifest": {
+    "author": "Interra Development Group, LLC",
+    "homepage_url": "https://github.com/Interra-Development-Group/ollama-sidekick",
     "permissions": [
       "sidePanel",
       "storage",
