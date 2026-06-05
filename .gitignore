@@ -23,6 +23,9 @@ npm-debug.log*
 *.tmp
 *.bak
 
+# Personal scratchpad / working notes (never commit)
+notes.md
+
 # IDE
 .vscode/
 .idea/
