@@ -1,0 +1,22 @@
+# Jekyll configuration for the Ollama Sidekick GitHub Pages site.
+#
+# This site only publishes the privacy policy and a small landing page. The
+# brainstorms/, plans/, and solutions/ directories under docs/ are Compound
+# Engineering working artifacts and MUST NOT appear on the public site.
+# If you add a new working-artifact directory under docs/, add it to the
+# exclude list below.
+
+title: Ollama Sidekick by Interra
+description: Privacy-first local AI in your browser side panel — fully local inference, no telemetry.
+url: https://interra-development-group.github.io
+baseurl: /ollama-sidekick
+
+theme: jekyll-theme-cayman
+
+permalink: pretty
+
+exclude:
+  - brainstorms
+  - plans
+  - solutions
+  - README.md
