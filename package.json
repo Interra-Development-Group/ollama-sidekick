@@ -1,0 +1,60 @@
+{
+  "name": "ollama-sidekick",
+  "displayName": "Ollama Sidekick",
+  "version": "0.1.0",
+  "description": "Privacy-first local AI side panel — Ollama + MCP + semantic page search",
+  "scripts": {
+    "dev": "plasmo dev",
+    "build": "plasmo build",
+    "package": "plasmo package",
+    "lint": "eslint src --ext .ts,.tsx",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "idb": "^8.0.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "zustand": "^4.5.2"
+  },
+  "devDependencies": {
+    "@plasmohq/messaging": "^0.6.2",
+    "@types/chrome": "^0.0.268",
+    "@types/node": "^20.11.5",
+    "@types/react": "18.2.55",
+    "@types/react-dom": "18.2.19",
+    "autoprefixer": "^10.4.17",
+    "plasmo": "^0.88.0",
+    "postcss": "^8.4.35",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.3.3"
+  },
+  "overrides": {
+    "@parcel/watcher": "^2.1.0"
+  },
+  "manifest": {
+    "permissions": [
+      "sidePanel",
+      "storage",
+      "alarms",
+      "tabs",
+      "activeTab",
+      "scripting"
+    ],
+    "host_permissions": [
+      "http://localhost/*",
+      "https://localhost/*",
+      "<all_urls>"
+    ],
+    "side_panel": {
+      "default_path": "sidepanel.html"
+    },
+    "commands": {
+      "_execute_action": {
+        "suggested_key": {
+          "default": "Alt+Shift+O"
+        },
+        "description": "Open Ollama Sidekick"
+      }
+    }
+  }
+}

@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+.npm/
+node_modules/.cache/
+node_modules/.bin/
+
+# Lock files (uncomment to track)
+yarn.lock
+package-lock.json
+
+# Build artifacts
+build/
+dist/
+
+# Plasmo generated / cache (never commit)
+.plasmo/
+
+# Logs and debug
+npm-debug.log*
+*.log
+
+# Temporary files
+*.tmp
+*.bak
+
+# IDE
+.vscode/
+.idea/
+
+# Environment (keep .env.development and .env.production committed for defaults)
+.env.local
+.env.*.local
+
+# Stray root-level files (these belong in src/)
+/client.ts
+/index.ts
+
+# Sandbox / tool artifacts
+mnt/
