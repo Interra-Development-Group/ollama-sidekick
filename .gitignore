@@ -26,6 +26,9 @@ npm-debug.log*
 # Personal scratchpad / working notes (never commit)
 notes.md
 
+# Raw macOS screenshots (commit prepared 1280x800 JPEGs instead)
+Screenshot*.png
+
 # IDE
 .vscode/
 .idea/

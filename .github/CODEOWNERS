@@ -1,0 +1,35 @@
+# Code owners for Ollama Sidekick
+#
+# Lines are matched bottom-up; the LAST matching pattern wins. Each pattern
+# auto-requests review from the listed owners on PRs that touch matching files.
+#
+# Syntax: https://docs.github.com/en/repositories/managing-your-repositories-settings-and-customization/customizing-your-repository/about-code-owners
+
+# Default owner for everything not matched below
+*                                       @piazzaam
+
+# Strategy, agent guidance, and architecture docs — review carries product weight
+/STRATEGY.md                            @piazzaam
+/AGENTS.md                              @piazzaam
+/ARCHITECTURE.md                        @piazzaam
+/CLAUDE.md                              @piazzaam
+
+# Privacy policy and anything affecting the public Pages site
+/docs/privacy.md                        @piazzaam
+/docs/_config.yml                       @piazzaam
+/docs/index.md                          @piazzaam
+
+# Manifest and build/distribution config (Chrome Web Store submission surface)
+/package.json                           @piazzaam
+/tsconfig.json                          @piazzaam
+/tailwind.config.js                     @piazzaam
+/.env.production                        @piazzaam
+
+# Cross-context message contracts — changes ripple through every layer
+/src/types/messages.ts                  @piazzaam
+
+# Background service worker — privacy boundary lives here
+/src/background/                        @piazzaam
+
+# This file
+/.github/CODEOWNERS                     @piazzaam
