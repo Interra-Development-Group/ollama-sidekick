@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "description": "Privacy-first local AI side panel — Ollama + MCP + semantic page search",
   "author": "Interra Development Group, LLC",
-  "homepage": "https://github.com/Interra-Development-Group/ollama-sidekick",
+  "homepage": "https://ollama-sidekick.interradevelopmentgroup.com",
   "repository": {
     "type": "git",
     "url": "https://github.com/Interra-Development-Group/ollama-sidekick.git"
@@ -40,7 +40,7 @@
   },
   "manifest": {
     "author": "Interra Development Group, LLC",
-    "homepage_url": "https://github.com/Interra-Development-Group/ollama-sidekick",
+    "homepage_url": "https://ollama-sidekick.interradevelopmentgroup.com",
     "permissions": [
       "sidePanel",
       "storage",
