@@ -13,6 +13,7 @@
   "scripts": {
     "dev": "plasmo dev",
     "build": "plasmo build",
+    "postbuild": "node -e \"const fs=require('fs'),p='build/chrome-mv3-prod/manifest.json',m=JSON.parse(fs.readFileSync(p,'utf8'));m.permissions=m.permissions.filter(x=>x!=='scripting');fs.writeFileSync(p,JSON.stringify(m,null,2));console.log('postbuild: removed scripting from manifest permissions')\"",
     "package": "plasmo package",
     "lint": "eslint src --ext .ts,.tsx",
     "typecheck": "tsc --noEmit"
@@ -46,8 +47,7 @@
       "storage",
       "alarms",
       "tabs",
-      "activeTab",
-      "scripting"
+      "activeTab"
     ],
     "host_permissions": [
       "http://localhost/*",
