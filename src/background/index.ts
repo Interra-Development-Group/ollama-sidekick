@@ -248,7 +248,7 @@ async function handleChat(
 
   // Build system message with page context + knowledge base context (RAG)
   const systemParts: string[] = [
-    "You are Ollama Sidekick, a helpful AI assistant embedded in the user's browser.",
+    "You are LocalMind, a helpful AI assistant embedded in the user's browser.",
     "You have access to the content of the current web page and the user's saved knowledge base."
   ]
 

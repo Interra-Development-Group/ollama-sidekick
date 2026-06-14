@@ -4,7 +4,7 @@ Guidance for AI coding agents working in this repository.
 
 ## What this project is
 
-Ollama Sidekick is a privacy-first Chrome extension (Manifest V3) that provides a
+LocalMind by Interra is a privacy-first Chrome extension (Manifest V3) that provides a
 persistent side panel for AI-assisted browsing, backed by a local Ollama instance
 and optional local MCP servers. Nothing leaves the user's machine.
 

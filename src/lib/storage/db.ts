@@ -11,7 +11,7 @@ interface AppDBSchema extends DBSchema {
   }
 }
 
-const DB_NAME = "ollama-sidekick"
+const DB_NAME = "localmind"
 const DB_VERSION = 2
 
 export type AppDatabase = IDBPDatabase<AppDBSchema>

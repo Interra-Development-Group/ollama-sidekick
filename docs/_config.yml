@@ -1,4 +1,4 @@
-# Jekyll configuration for the Ollama Sidekick GitHub Pages site.
+# Jekyll configuration for the LocalMind by Interra GitHub Pages site.
 #
 # This site only publishes the privacy policy and a small landing page. The
 # brainstorms/, plans/, and solutions/ directories under docs/ are Compound
@@ -6,9 +6,9 @@
 # If you add a new working-artifact directory under docs/, add it to the
 # exclude list below.
 
-title: Ollama Sidekick by Interra
+title: LocalMind by Interra
 description: Privacy-first local AI in your browser side panel — fully local inference, no telemetry.
-url: https://ollama-sidekick.interradevelopmentgroup.com
+url: https://localmind.interradevelopmentgroup.com
 baseurl: ""
 
 theme: jekyll-theme-cayman

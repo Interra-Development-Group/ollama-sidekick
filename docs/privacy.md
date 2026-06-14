@@ -7,11 +7,11 @@ permalink: /privacy/
 # Privacy Policy
 
 **Effective date:** 2026-06-04
-**Last updated:** 2026-06-04
+**Last updated:** 2026-06-13
 **Publisher:** Interra Development Group, LLC
-**Product:** Ollama Sidekick (Chrome Extension)
+**Product:** LocalMind by Interra (Chrome Extension)
 
-This policy explains what data Ollama Sidekick handles, where it lives, and what we
+This policy explains what data LocalMind by Interra handles, where it lives, and what we
 do (and don't do) with it. The short version: nothing you do in this extension
 leaves your machine.
 
@@ -19,7 +19,7 @@ leaves your machine.
 
 ## What we collect and transmit
 
-**Nothing.** Ollama Sidekick is a fully local extension. We do not operate any
+**Nothing.** LocalMind by Interra is a fully local extension. We do not operate any
 servers, do not run analytics, and do not transmit any personal data, browsing
 activity, chat history, page content, embeddings, or telemetry off your machine.
 
@@ -122,7 +122,6 @@ purpose listed:
 | `storage` | Save settings, favorites, and snapshots locally |
 | `alarms` | Wake the service worker on a schedule to run the crawler |
 | `tabs`, `activeTab` | Read the active tab's URL and title to associate page context with chat |
-| `scripting` | Inject the content script that extracts text from the active page |
 | `<all_urls>` host permission | The content script must be able to run on any page you visit, since you can chat about any page |
 | `http://localhost/*`, `https://localhost/*` host permissions | Connect to your local Ollama instance and local MCP servers |
 
@@ -166,7 +165,7 @@ called out in the extension's release notes.
 Questions or concerns about this policy:
 
 - Open an issue on
-  [the GitHub repository](https://github.com/Interra-Development-Group/ollama-sidekick/issues)
+  [the GitHub repository](https://github.com/Interra-Development-Group/localmind/issues)
 - For sensitive matters, contact a maintainer privately via the contact information
   listed on the
   [Interra Development Group GitHub organization page](https://github.com/Interra-Development-Group)

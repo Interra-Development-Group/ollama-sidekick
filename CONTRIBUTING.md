@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for your interest in Ollama Sidekick. This project is a privacy-first, fully
+Thanks for your interest in LocalMind by Interra. This project is a privacy-first, fully
 local Chrome extension — every contribution that keeps it that way is welcome.
 
 ## Quick start
@@ -142,6 +142,6 @@ base warrants it.
 ## Where to ask questions
 
 Open an issue on
-[the GitHub repo](https://github.com/Interra-Development-Group/ollama-sidekick/issues).
+[the GitHub repo](https://github.com/Interra-Development-Group/localmind/issues).
 For sensitive matters (e.g., security disclosures), email a maintainer directly
 rather than opening a public issue.

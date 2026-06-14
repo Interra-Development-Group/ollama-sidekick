@@ -103,7 +103,7 @@ export default function App() {
       <header className="bg-slate-900 px-3 py-2.5 flex items-center gap-2.5 shrink-0">
         <span className="text-xl leading-none select-none">🦙</span>
         <span className="text-white font-semibold text-sm tracking-tight flex-1">
-          Ollama Sidekick
+          LocalMind by Interra
         </span>
         <ModelSelector
           availableModels={availableModels}

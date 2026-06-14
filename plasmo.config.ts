@@ -6,7 +6,6 @@ export default ({
       "alarms",
       "tabs",
       "activeTab",
-      "scripting"
     ],
     host_permissions: [
       "http://localhost/*",
@@ -21,7 +20,7 @@ export default ({
         suggested_key: {
           default: "Alt+Shift+O"
         },
-        description: "Open Ollama Sidekick"
+        description: "Open LocalMind by Interra"
       }
     },
     content_security_policy: {

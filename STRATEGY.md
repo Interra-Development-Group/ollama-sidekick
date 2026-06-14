@@ -1,4 +1,4 @@
-# Product Strategy — Ollama Sidekick
+# Product Strategy — LocalMind by Interra
 
 ## Target user
 

@@ -1,9 +1,9 @@
 ---
 layout: default
-title: Ollama Sidekick by Interra
+title: LocalMind by Interra
 ---
 
-# Ollama Sidekick by Interra
+# LocalMind by Interra
 
 A privacy-first AI assistant that lives in your Chrome side panel. All inference runs
 locally through [Ollama](https://ollama.com) — no data leaves your machine, no
@@ -11,7 +11,7 @@ accounts, no subscriptions.
 
 ## Links
 
-- **[Source on GitHub](https://github.com/Interra-Development-Group/ollama-sidekick)** — code, issues, releases
+- **[Source on GitHub](https://github.com/Interra-Development-Group/localmind)** — code, issues, releases
 - **[Privacy Policy](/privacy/)** — what we collect (nothing), what stays local (everything)
 - **[Chrome Web Store listing](https://chrome.google.com/webstore)** *(coming soon)*
 
@@ -24,7 +24,7 @@ accounts, no subscriptions.
 - Optional [MCP](https://modelcontextprotocol.io) tool calling against local servers
 
 For setup instructions and details, see the
-[README](https://github.com/Interra-Development-Group/ollama-sidekick#readme).
+[README](https://github.com/Interra-Development-Group/localmind#readme).
 
 ---
 

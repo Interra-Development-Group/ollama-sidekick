@@ -258,7 +258,7 @@ export default function OptionsPage() {
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-8">
-      <h1 className="text-xl font-bold text-slate-900">Ollama Sidekick — Settings</h1>
+      <h1 className="text-xl font-bold text-slate-900">LocalMind by Interra — Settings</h1>
 
       {/* ── Ollama Connection ─────────────────────────────────────── */}
       <section className="space-y-3">
@@ -414,7 +414,7 @@ export default function OptionsPage() {
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <span className="text-xl leading-none">🦙</span>
-            <h2 className="text-base font-bold text-slate-900">Ollama Sidekick</h2>
+            <h2 className="text-base font-bold text-slate-900">LocalMind by Interra</h2>
           </div>
           <p className="text-sm text-slate-600 leading-relaxed">
             A Chrome extension that connects your browser to a local Ollama instance — giving you a
@@ -439,7 +439,7 @@ export default function OptionsPage() {
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Built by</p>
           <p className="text-sm font-semibold text-slate-800">Tony Piazza</p>
           <p className="text-sm text-slate-600 leading-relaxed">
-            Software architect with over 30 years of experience. Ollama Sidekick
+            Software architect with over 30 years of experience. LocalMind by Interra
             grew out of work building local-first AI tooling and MCP integrations — a practical tool
             for anyone who wants powerful AI assistance without surrendering their data to the cloud.
           </p>
@@ -506,7 +506,7 @@ export default function OptionsPage() {
         </div>
 
         <p className="text-xs text-slate-400 text-center pb-2">
-          Ollama Sidekick is built for people who believe your AI assistant should work for you —
+          LocalMind by Interra is built for people who believe your AI assistant should work for you —
           not report back to someone else.
         </p>
       </section>

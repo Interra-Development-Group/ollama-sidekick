@@ -1,8 +1,8 @@
-# CLAUDE.md — Ollama Sidekick Chrome Extension
+# CLAUDE.md — LocalMind by Interra Chrome Extension
 
 ## Project Overview
 
-**Ollama Sidekick** is a Chrome Extension (Manifest V3) that provides a persistent side panel
+**LocalMind by Interra** is a Chrome Extension (Manifest V3) that provides a persistent side panel
 for AI-assisted browsing. It connects to a locally-running Ollama instance for LLM inference
 and local embeddings, communicates with local MCP servers over SSE transport, extracts and
 understands content from the current browser tab, and runs a scheduled background crawler that

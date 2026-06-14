@@ -162,7 +162,7 @@ export class MCPClient {
     await this.rpc("initialize", {
       protocolVersion: "2024-11-05",
       capabilities: {},
-      clientInfo: { name: "ollama-sidekick", version: "0.1.0" }
+      clientInfo: { name: "localmind", version: "0.1.0" }
     })
     this.notify("notifications/initialized")
   }

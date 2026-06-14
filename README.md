@@ -1,20 +1,20 @@
-# Ollama Sidekick
+# LocalMind by Interra
 
 A privacy-first AI assistant that lives in your browser's side panel. All inference runs locally through [Ollama](https://ollama.com) — no data leaves your machine, no accounts, no subscriptions.
 
-![Ollama Sidekick side panel](screenshots/sidepanel.png)
+![LocalMind by Interra side panel](screenshots/sidepanel.png)
 
 ---
 
 ## What it does
 
-**Chat** — Ask questions about the page you're reading. Ollama Sidekick automatically picks up the current page's text and uses it as context, so you can ask things like "summarize this article", "what are the key arguments here?", or "find the pricing information on this page."
+**Chat** — Ask questions about the page you're reading. LocalMind by Interra automatically picks up the current page's text and uses it as context, so you can ask things like "summarize this article", "what are the key arguments here?", or "find the pricing information on this page."
 
 **Search your saved pages** — Mark pages as favorites and the extension crawls them on a schedule, building a local semantic index. The Search tab lets you find relevant content across everything you've saved using natural-language queries, not just keyword matching.
 
 **Knowledge base** — Browse all your crawled pages in one place, with auto-generated summaries and the ability to drill into page sections.
 
-**MCP tool calling** — If you run local [MCP](https://modelcontextprotocol.io) servers, Ollama Sidekick can discover their tools and let the AI use them during chat.
+**MCP tool calling** — If you run local [MCP](https://modelcontextprotocol.io) servers, LocalMind by Interra can discover their tools and let the AI use them during chat.
 
 ---
 
@@ -72,7 +72,7 @@ OLLAMA_ORIGINS="chrome-extension://*" ollama serve
 
 ### 4. Open the side panel
 
-Click the Ollama Sidekick icon in your Chrome toolbar. The side panel opens on the right side of your browser window and stays open as you browse.
+Click the LocalMind by Interra icon in your Chrome toolbar. The side panel opens on the right side of your browser window and stays open as you browse.
 
 ---
 
@@ -141,7 +141,7 @@ If a model you had selected is removed from Ollama, the selector will briefly fl
 - The crawler only fetches URLs you explicitly mark as favorites.
 - No analytics, telemetry, or tracking of any kind.
 
-For the full policy, see [the published privacy policy](https://ollama-sidekick.interradevelopmentgroup.com/privacy/).
+For the full policy, see [the published privacy policy](https://localmind.interradevelopmentgroup.com/privacy/).
 
 ---
 
@@ -153,13 +153,13 @@ Published by **Interra Development Group, LLC**. Source code is open and inspect
 
 ## A note on the Ollama name
 
-"Ollama Sidekick" is an independent community extension and is not affiliated with, endorsed by, or officially connected to Ollama. The extension connects to your locally-running Ollama instance but is otherwise a separate project. Ollama does not appear to have published a formal naming policy for third-party integrations, and numerous community tools already use the name under similar terms. If you have questions about this, you can reach the Ollama team at hello@ollama.com.
+"LocalMind by Interra" is an independent community extension and is not affiliated with, endorsed by, or officially connected to Ollama. The extension connects to your locally-running Ollama instance but is otherwise a separate project. Ollama does not appear to have published a formal naming policy for third-party integrations, and numerous community tools already use the name under similar terms. If you have questions about this, you can reach the Ollama team at hello@ollama.com.
 
 ---
 
 ## Developer setup
 
-**Repository:** [github.com/Interra-Development-Group/ollama-sidekick](https://github.com/Interra-Development-Group/ollama-sidekick)
+**Repository:** [github.com/Interra-Development-Group/localmind](https://github.com/Interra-Development-Group/localmind)
 
 For architecture, contribution guidelines, and product strategy, see [ARCHITECTURE.md](ARCHITECTURE.md), [CONTRIBUTING.md](CONTRIBUTING.md), and [STRATEGY.md](STRATEGY.md).
 

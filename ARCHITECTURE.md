@@ -1,12 +1,12 @@
 # Architecture
 
-This document is a human-facing summary of how Ollama Sidekick is built. It is
+This document is a human-facing summary of how LocalMind by Interra is built. It is
 intentionally short — for the full architectural spec, message protocol details, and
 per-file responsibilities, see [CLAUDE.md](CLAUDE.md).
 
 ## Overview
 
-Ollama Sidekick is a Chrome Manifest V3 extension that gives the user a persistent
+LocalMind by Interra is a Chrome Manifest V3 extension that gives the user a persistent
 side panel for AI-assisted browsing. All inference runs locally through a
 user-installed [Ollama](https://ollama.com) instance; no data leaves the machine.
 The extension extracts content from the active tab, lets the user chat about it,

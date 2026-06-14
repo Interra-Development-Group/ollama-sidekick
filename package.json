@@ -1,13 +1,13 @@
 {
-  "name": "ollama-sidekick",
-  "displayName": "Ollama Sidekick by Interra",
+  "name": "localmind",
+  "displayName": "LocalMind by Interra",
   "version": "0.1.0",
   "description": "Privacy-first local AI side panel — Ollama + MCP + semantic page search",
   "author": "Interra Development Group, LLC",
-  "homepage": "https://ollama-sidekick.interradevelopmentgroup.com",
+  "homepage": "https://localmind.interradevelopmentgroup.com",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Interra-Development-Group/ollama-sidekick.git"
+    "url": "https://github.com/Interra-Development-Group/localmind.git"
   },
   "license": "MIT",
   "scripts": {
@@ -41,7 +41,7 @@
   },
   "manifest": {
     "author": "Interra Development Group, LLC",
-    "homepage_url": "https://ollama-sidekick.interradevelopmentgroup.com",
+    "homepage_url": "https://localmind.interradevelopmentgroup.com",
     "permissions": [
       "sidePanel",
       "storage",
@@ -62,7 +62,7 @@
         "suggested_key": {
           "default": "Alt+Shift+O"
         },
-        "description": "Open Ollama Sidekick"
+        "description": "Open LocalMind by Interra"
       }
     }
   }

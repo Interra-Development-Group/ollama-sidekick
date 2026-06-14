@@ -59,14 +59,14 @@ jobs:
       - name: Rename zip to include version
         run: |
           VERSION="${GITHUB_REF_NAME}"
-          mv build/chrome-mv3-prod.zip "build/ollama-sidekick-${VERSION}.zip"
+          mv build/chrome-mv3-prod.zip "build/localmind-${VERSION}.zip"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           name: "${{ github.ref_name }}"
           generate_release_notes: true
-          files: build/ollama-sidekick-*.zip
+          files: build/localmind-*.zip
           fail_on_unmatched_files: true
           draft: false
           prerelease: ${{ contains(github.ref_name, '-') }}
