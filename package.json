@@ -1,7 +1,7 @@
 {
   "name": "localmind",
   "displayName": "LocalMind by Interra",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Privacy-first local AI side panel — Ollama + MCP + semantic page search",
   "author": "Interra Development Group, LLC",
   "homepage": "https://localmind.interradevelopmentgroup.com",
